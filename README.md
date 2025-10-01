@@ -99,6 +99,38 @@ docker build --build-arg WAL_G_VARIANT=mysql -t wal-g:mysql .
 docker build --build-arg WAL_G_VERSION=v3.0.7 -t wal-g:v3.0.7 .
 ```
 
+### Local Testing with Docker Compose
+
+```bash
+# Build and test PostgreSQL variant
+docker-compose --profile pg up --build wal-g-pg
+
+# Build and test MySQL variant  
+docker-compose --profile mysql up --build wal-g-mysql
+
+# Build and test MongoDB variant
+docker-compose --profile mongo up --build wal-g-mongo
+
+# Build and test Redis variant
+docker-compose --profile redis up --build wal-g-redis
+```
+
+### Example Configurations
+
+The `examples/` directory contains sample configurations:
+
+- `postgresql-docker-compose.yml` - Complete PostgreSQL setup with WAL-G
+- `wal-archive.sh` - WAL archiving script for PostgreSQL
+- `wal-restore.sh` - WAL restore script for PostgreSQL
+
+To use the PostgreSQL example:
+
+```bash
+cp examples/postgresql-docker-compose.yml docker-compose.override.yml
+# Edit the file to add your S3 credentials
+docker-compose up postgres
+```
+
 ### Trigger Manual Build
 
 You can manually trigger a build via GitHub Actions:

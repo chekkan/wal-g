@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # PostgreSQL variant
+  wal-g-pg:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        WAL_G_VERSION: v3.0.7
+        WAL_G_VARIANT: pg
+    image: wal-g:pg-local
+    container_name: wal-g-pg
+    profiles: ["pg"]
+    
+  # MySQL variant
+  wal-g-mysql:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        WAL_G_VERSION: v3.0.7
+        WAL_G_VARIANT: mysql
+    image: wal-g:mysql-local
+    container_name: wal-g-mysql
+    profiles: ["mysql"]
+    
+  # MongoDB variant
+  wal-g-mongo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        WAL_G_VERSION: v3.0.7
+        WAL_G_VARIANT: mongo
+    image: wal-g:mongo-local
+    container_name: wal-g-mongo
+    profiles: ["mongo"]
+    
+  # Redis variant
+  wal-g-redis:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        WAL_G_VERSION: v3.0.7
+        WAL_G_VARIANT: redis
+    image: wal-g:redis-local
+    container_name: wal-g-redis
+    profiles: ["redis"]
