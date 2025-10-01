@@ -27,16 +27,11 @@ jobs:
 
       - name: Validate GitHub Actions workflows
         run: |
-          # Install actionlint using GitHub releases
-          ACTIONLINT_VERSION=$(curl -s https://api.github.com/repos/rhymond/actionlint/releases/latest | grep '"tag_name"' | cut -d '"' -f 4)
-          if [ -n "$ACTIONLINT_VERSION" ]; then
-            curl -L "https://github.com/rhymond/actionlint/releases/download/${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION#v}_linux_amd64.tar.gz" | tar xz
-            chmod +x actionlint
-            # Validate workflow files
-            ./actionlint .github/workflows/*.yml || echo "GitHub Actions validation completed with warnings"
-          else
-            echo "Could not fetch actionlint, skipping workflow validation"
-          fi
+          # Install actionlint for workflow validation
+          curl -s https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash | bash
+          
+          # Validate workflow files
+          ./actionlint .github/workflows/*.yml
 
       - name: Check dependabot configuration
         run: |
