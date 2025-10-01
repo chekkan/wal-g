@@ -35,16 +35,16 @@ jobs:
           # Check if we have a manual version input
           if [ -n "${{ github.event.inputs.wal_g_version }}" ]; then
             echo "Manual trigger with version: ${{ github.event.inputs.wal_g_version }}"
-            echo "should-build=true" >> $GITHUB_OUTPUT
-            echo "latest-version=${{ github.event.inputs.wal_g_version }}" >> $GITHUB_OUTPUT
+            echo "should-build=true" >> "$GITHUB_OUTPUT"
+            echo "latest-version=${{ github.event.inputs.wal_g_version }}" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           
           # For push events, always build
           if [ "${{ github.event_name }}" = "push" ]; then
             echo "Push event, building with default version"
-            echo "should-build=true" >> $GITHUB_OUTPUT
-            echo "latest-version=v3.0.7" >> $GITHUB_OUTPUT
+            echo "should-build=true" >> "$GITHUB_OUTPUT"
+            echo "latest-version=v3.0.7" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           
@@ -59,18 +59,18 @@ jobs:
           # Skip if it's a prerelease
           if [ "$IS_PRERELEASE" = "true" ]; then
             echo "Skipping prerelease $LATEST_VERSION"
-            echo "should-build=false" >> $GITHUB_OUTPUT
+            echo "should-build=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           
           # Check if we already have this version tagged
           if git ls-remote --tags origin | grep -q "refs/tags/$LATEST_VERSION"; then
             echo "Version $LATEST_VERSION already exists"
-            echo "should-build=false" >> $GITHUB_OUTPUT
+            echo "should-build=false" >> "$GITHUB_OUTPUT"
           else
             echo "New version $LATEST_VERSION found"
-            echo "should-build=true" >> $GITHUB_OUTPUT
-            echo "latest-version=$LATEST_VERSION" >> $GITHUB_OUTPUT
+            echo "should-build=true" >> "$GITHUB_OUTPUT"
+            echo "latest-version=$LATEST_VERSION" >> "$GITHUB_OUTPUT"
           fi
 
   build:
@@ -99,9 +99,9 @@ jobs:
         with:
           images: ${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=latest,enable={{is_default_branch}},suffix=-${{ matrix.variant }}
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }},suffix=-${{ matrix.variant }}
             type=raw,value=${{ needs.check-release.outputs.latest-version }},suffix=-${{ matrix.variant }}
-            type=raw,value=latest,enable=${{ matrix.variant == 'pg' && is_default_branch }}
+            type=raw,value=latest,enable=${{ matrix.variant == 'pg' && github.ref == 'refs/heads/main' }}
             type=raw,value=${{ needs.check-release.outputs.latest-version }},enable=${{ matrix.variant == 'pg' }}
 
       - name: Set up Docker Buildx
