@@ -1,0 +1,46 @@
+# Example configuration for PostgreSQL with WAL-G
+# Save this as docker-compose.override.yml and run: docker-compose up
+
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: myapp
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      # WAL-G configuration
+      WALG_S3_PREFIX: s3://my-backup-bucket/postgres
+      AWS_ACCESS_KEY_ID: your-access-key
+      AWS_SECRET_ACCESS_KEY: your-secret-key
+      AWS_REGION: us-west-2
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./wal-g-scripts:/scripts
+    command: |
+      postgres -c wal_level=replica 
+               -c archive_mode=on 
+               -c archive_command='/scripts/wal-archive.sh %f %p'
+               -c restore_command='/scripts/wal-restore.sh %f %p'
+
+  wal-g-backup:
+    image: chekkan/wal-g:latest-pg
+    environment:
+      WALG_S3_PREFIX: s3://my-backup-bucket/postgres
+      AWS_ACCESS_KEY_ID: your-access-key
+      AWS_SECRET_ACCESS_KEY: your-secret-key
+      AWS_REGION: us-west-2
+    volumes:
+      - postgres_data:/var/lib/postgresql/data:ro
+    profiles: ["backup"]
+    command: |
+      sh -c 'while true; do
+        echo "Running backup..."
+        wal-g backup-push /var/lib/postgresql/data
+        echo "Backup completed. Sleeping for 24 hours..."
+        sleep 86400
+      done'
+
+volumes:
+  postgres_data:

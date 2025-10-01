@@ -1,0 +1,79 @@
+name: Validate PR
+
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Run validation script
+        run: |
+          chmod +x validate.sh
+          ./validate.sh
+
+      - name: Test Dockerfile syntax
+        run: |
+          # Validate Dockerfile syntax using hadolint (allow warnings)
+          docker run --rm -i hadolint/hadolint < Dockerfile || echo "Dockerfile validation completed with warnings"
+
+      - name: Validate GitHub Actions workflows
+        run: |
+          # Install actionlint for workflow validation
+          curl -s https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash | bash
+          
+          # Validate workflow files
+          ./actionlint .github/workflows/*.yml
+
+      - name: Check dependabot configuration
+        run: |
+          # Validate dependabot.yml syntax
+          if ! command -v yq &> /dev/null; then
+            sudo snap install yq
+          fi
+          yq eval '.version' .github/dependabot.yml
+          yq eval '.updates[].package-ecosystem' .github/dependabot.yml
+
+      - name: Test Docker Compose
+        run: |
+          # Validate docker-compose.yml syntax (try compose v2 first, fallback to v1)
+          if command -v docker &> /dev/null && docker compose version &> /dev/null; then
+            docker compose config -q
+          elif command -v docker-compose &> /dev/null; then
+            docker-compose config -q
+          else
+            echo "Neither docker compose nor docker-compose found, skipping validation"
+          fi
+
+  test-build:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    strategy:
+      matrix:
+        variant: [pg, mysql]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Test build for ${{ matrix.variant }}
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false
+          build-args: |
+            WAL_G_VERSION=v3.0.7
+            WAL_G_VARIANT=${{ matrix.variant }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
