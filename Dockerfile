@@ -3,6 +3,7 @@ FROM ubuntu:24.04
 # Set build arguments for wal-g version and variant
 ARG WAL_G_VERSION="v3.0.7"
 ARG WAL_G_VARIANT="pg"
+ARG TARGETPLATFORM
 
 # Install required packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -19,7 +20,21 @@ WORKDIR /opt/wal-g
 # Download and install wal-g
 # Note: Using a specific version pattern since we know the format
 RUN VERSION="${WAL_G_VERSION#v}" && \
-    DOWNLOAD_URL="https://github.com/wal-g/wal-g/releases/download/v${VERSION}/wal-g-${WAL_G_VARIANT}-ubuntu-24.04-amd64.tar.gz" && \
+    case "${TARGETPLATFORM}" in \
+        "linux/amd64") \
+            UBUNTU_VERSION="24.04" && \
+            ARCH="amd64" \
+            ;; \
+        "linux/arm64") \
+            UBUNTU_VERSION="22.04" && \
+            ARCH="aarch64" \
+            ;; \
+        *) \
+            echo "Unsupported platform: ${TARGETPLATFORM}" && \
+            exit 1 \
+            ;; \
+    esac && \
+    DOWNLOAD_URL="https://github.com/wal-g/wal-g/releases/download/v${VERSION}/wal-g-${WAL_G_VARIANT}-ubuntu-${UBUNTU_VERSION}-${ARCH}.tar.gz" && \
     echo "Downloading wal-g v${VERSION} variant ${WAL_G_VARIANT} from ${DOWNLOAD_URL}" && \
     curl -L "$DOWNLOAD_URL" -o wal-g.tar.gz && \
     tar -xzf wal-g.tar.gz && \
