@@ -44,8 +44,14 @@ jobs:
 
       - name: Test Docker Compose
         run: |
-          # Validate docker-compose.yml syntax
-          docker-compose config -q
+          # Validate docker-compose.yml syntax (try compose v2 first, fallback to v1)
+          if command -v docker &> /dev/null && docker compose version &> /dev/null; then
+            docker compose config -q
+          elif command -v docker-compose &> /dev/null; then
+            docker-compose config -q
+          else
+            echo "Neither docker compose nor docker-compose found, skipping validation"
+          fi
 
   test-build:
     runs-on: ubuntu-latest
