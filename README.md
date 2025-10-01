@@ -7,7 +7,7 @@ This repository contains Docker images for [WAL-G](https://github.com/wal-g/wal-
 - 🚀 **Automated Builds**: Automatically builds new Docker images when WAL-G releases new versions
 - 🔄 **Multiple Variants**: Supports all WAL-G database variants (PostgreSQL, MySQL, MongoDB, Redis, Greenplum, FDB, SQL Server)
 - 🛡️ **Security**: Runs as non-root user, uses distroless base images
-- 📦 **GitHub Container Registry**: Images are published to `ghcr.io/chekkan/wal-g`
+- 📦 **Docker Hub**: Images are published to `chekkan/wal-g`
 - 🤖 **Dependabot**: Automatically updates dependencies
 
 ## Usage
@@ -16,23 +16,23 @@ This repository contains Docker images for [WAL-G](https://github.com/wal-g/wal-
 
 ```bash
 # PostgreSQL variant (default)
-docker pull ghcr.io/chekkan/wal-g:latest-pg
+docker pull chekkan/wal-g:latest-pg
 
 # MySQL variant
-docker pull ghcr.io/chekkan/wal-g:latest-mysql
+docker pull chekkan/wal-g:latest-mysql
 
 # MongoDB variant
-docker pull ghcr.io/chekkan/wal-g:latest-mongo
+docker pull chekkan/wal-g:latest-mongo
 
 # Redis variant
-docker pull ghcr.io/chekkan/wal-g:latest-redis
+docker pull chekkan/wal-g:latest-redis
 ```
 
 ### Run WAL-G
 
 ```bash
 # Show help
-docker run --rm ghcr.io/chekkan/wal-g:latest-pg
+docker run --rm chekkan/wal-g:latest-pg
 
 # Run with your configuration
 docker run --rm \
@@ -40,7 +40,7 @@ docker run --rm \
   -e AWS_ACCESS_KEY_ID="your-access-key" \
   -e AWS_SECRET_ACCESS_KEY="your-secret-key" \
   -v /var/lib/postgresql/data:/var/lib/postgresql/data \
-  ghcr.io/chekkan/wal-g:latest-pg \
+  chekkan/wal-g:latest-pg \
   backup-push /var/lib/postgresql/data
 ```
 
@@ -81,7 +81,7 @@ This repository automatically:
 1. ✅ Monitors the [wal-g/wal-g](https://github.com/wal-g/wal-g) repository for new releases
 2. ✅ Skips pre-releases (only builds stable releases)
 3. ✅ Builds Docker images for all supported database variants
-4. ✅ Publishes images to GitHub Container Registry
+4. ✅ Publishes images to Docker Hub
 5. ✅ Creates git tags matching WAL-G versions
 
 ## Development

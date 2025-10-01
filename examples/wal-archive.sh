@@ -17,7 +17,7 @@ if docker run --rm \
     -e AWS_ACCESS_KEY_ID \
     -e AWS_SECRET_ACCESS_KEY \
     -e AWS_REGION \
-    ghcr.io/chekkan/wal-g:latest-pg \
+    chekkan/wal-g:latest-pg \
     wal-push "/wal/$(basename "$WAL_PATH")"; then
     echo "$(date): Successfully archived $WAL_FILE"
     exit 0
