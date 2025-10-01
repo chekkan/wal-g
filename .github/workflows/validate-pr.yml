@@ -12,6 +12,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Run validation script
         run: |
           chmod +x validate.sh
@@ -20,7 +23,7 @@ jobs:
       - name: Test Dockerfile syntax
         run: |
           # Test Dockerfile can be parsed
-          docker build --build-arg WAL_G_VERSION=v3.0.7 --build-arg WAL_G_VARIANT=pg --dry-run .
+          docker buildx build --build-arg WAL_G_VERSION=v3.0.7 --build-arg WAL_G_VARIANT=pg --dry-run .
 
       - name: Validate GitHub Actions workflows
         run: |
