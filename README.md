@@ -6,6 +6,7 @@ This repository contains Docker images for [WAL-G](https://github.com/wal-g/wal-
 
 - 🚀 **Automated Builds**: Automatically builds new Docker images when WAL-G releases new versions
 - 🔄 **Multiple Variants**: Supports all WAL-G database variants (PostgreSQL, MySQL, MongoDB, Redis, Greenplum, FDB, SQL Server)
+- 🏗️ **Multi-Architecture**: Supports both `linux/amd64` and `linux/arm64` platforms
 - 🛡️ **Security**: Runs as non-root user, uses distroless base images
 - 📦 **Docker Hub**: Images are published to `chekkan/wal-g`
 - 🤖 **Dependabot**: Automatically updates dependencies
@@ -81,8 +82,9 @@ This repository automatically:
 1. ✅ Monitors the [wal-g/wal-g](https://github.com/wal-g/wal-g) repository for new releases
 2. ✅ Skips pre-releases (only builds stable releases)
 3. ✅ Builds Docker images for all supported database variants
-4. ✅ Publishes images to Docker Hub
-5. ✅ Creates git tags matching WAL-G versions
+4. ✅ Supports both linux/amd64 and linux/arm64 architectures
+5. ✅ Publishes images to Docker Hub
+6. ✅ Creates git tags matching WAL-G versions
 
 ## Development
 
@@ -97,6 +99,10 @@ docker build --build-arg WAL_G_VARIANT=mysql -t wal-g:mysql .
 
 # Build specific version
 docker build --build-arg WAL_G_VERSION=v3.0.7 -t wal-g:v3.0.7 .
+
+# Build for specific platform
+docker build --platform linux/amd64 -t wal-g:amd64 .
+docker build --platform linux/arm64 -t wal-g:arm64 .
 ```
 
 ### Local Testing with Docker Compose

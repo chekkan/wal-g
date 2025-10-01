@@ -17,8 +17,14 @@ echo ""
 
 for variant in "${VARIANTS[@]}"; do
     clean_version="${VERSION#v}"
-    url="https://github.com/wal-g/wal-g/releases/download/v${clean_version}/wal-g-${variant}-ubuntu-24.04-amd64.tar.gz"
-    echo "  ✅ $variant: $url"
+    
+    # Test AMD64 URL (Ubuntu 24.04)
+    amd64_url="https://github.com/wal-g/wal-g/releases/download/v${clean_version}/wal-g-${variant}-ubuntu-24.04-amd64.tar.gz"
+    echo "  ✅ $variant (amd64): $amd64_url"
+    
+    # Test ARM64 URL (Ubuntu 22.04)
+    arm64_url="https://github.com/wal-g/wal-g/releases/download/v${clean_version}/wal-g-${variant}-ubuntu-22.04-aarch64.tar.gz"
+    echo "  ✅ $variant (arm64): $arm64_url"
 done
 
 echo ""
