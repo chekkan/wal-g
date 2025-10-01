@@ -12,9 +12,6 @@ updates:
       include: "scope"
     reviewers:
       - "chekkan"
-    labels:
-      - "dependencies"
-      - "docker"
 
   # Monitor GitHub Actions workflow dependencies
   - package-ecosystem: "github-actions"
@@ -28,6 +25,3 @@ updates:
       include: "scope"
     reviewers:
       - "chekkan"
-    labels:
-      - "dependencies"
-      - "github-actions"
