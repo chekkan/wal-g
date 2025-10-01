@@ -8,10 +8,6 @@ on:
         description: 'WAL-G version to build (e.g., v3.0.7)'
         required: false
         default: 'v3.0.7'
-      
-  # Schedule to check for new releases (runs daily at 2 AM UTC)
-  schedule:
-    - cron: '0 2 * * *'
 
   # Push to main branch
   push:
