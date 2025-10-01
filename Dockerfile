@@ -51,5 +51,6 @@ USER walg
 # Verify installation
 RUN wal-g --help
 
-# Set default command
-CMD ["wal-g", "--help"]
+# Set entrypoint and default command
+ENTRYPOINT ["wal-g"]
+CMD ["--help"]
