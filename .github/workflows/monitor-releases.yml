@@ -1,0 +1,51 @@
+name: Monitor WAL-G Releases
+
+on:
+  schedule:
+    # Check for new releases every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  check-releases:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for new WAL-G releases
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get latest release from wal-g/wal-g
+          LATEST_RELEASE=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            https://api.github.com/repos/wal-g/wal-g/releases/latest)
+          
+          LATEST_VERSION=$(echo "$LATEST_RELEASE" | jq -r '.tag_name')
+          IS_PRERELEASE=$(echo "$LATEST_RELEASE" | jq -r '.prerelease')
+          
+          echo "Latest WAL-G version: $LATEST_VERSION"
+          echo "Is prerelease: $IS_PRERELEASE"
+          
+          # Skip if it's a prerelease
+          if [ "$IS_PRERELEASE" = "true" ]; then
+            echo "Skipping prerelease $LATEST_VERSION"
+            exit 0
+          fi
+          
+          # Check if we already have this version
+          if git ls-remote --tags origin | grep -q "refs/tags/$LATEST_VERSION"; then
+            echo "Version $LATEST_VERSION already exists, no action needed"
+            exit 0
+          fi
+          
+          echo "New version $LATEST_VERSION found! Triggering build workflow..."
+          
+          # Trigger the build workflow
+          curl -X POST \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/actions/workflows/build-images.yml/dispatches \
+            -d "{\"ref\":\"main\",\"inputs\":{\"wal_g_version\":\"$LATEST_VERSION\"}}"
