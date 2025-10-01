@@ -22,8 +22,8 @@ jobs:
 
       - name: Test Dockerfile syntax
         run: |
-          # Test Dockerfile can be parsed
-          docker buildx build --build-arg WAL_G_VERSION=v3.0.7 --build-arg WAL_G_VARIANT=pg --dry-run .
+          # Validate Dockerfile syntax using hadolint
+          docker run --rm -i hadolint/hadolint < Dockerfile
 
       - name: Validate GitHub Actions workflows
         run: |
