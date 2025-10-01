@@ -5,7 +5,7 @@ ARG WAL_G_VERSION="v3.0.7"
 ARG WAL_G_VARIANT="pg"
 
 # Install required packages
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
