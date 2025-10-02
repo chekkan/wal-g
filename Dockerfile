@@ -12,10 +12,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Create wal-g user
-RUN useradd -r -s /bin/false walg
+RUN useradd -r -s /bin/bash walg
 
 # Set working directory
 WORKDIR /opt/wal-g
+
+# Copy entrypoint script
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Download and install wal-g
 # Note: Using a specific version pattern since we know the format
@@ -52,5 +56,5 @@ USER walg
 RUN wal-g --help
 
 # Set entrypoint and default command
-ENTRYPOINT ["wal-g"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["--help"]

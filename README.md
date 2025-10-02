@@ -45,6 +45,21 @@ docker run --rm \
   backup-push /var/lib/postgresql/data
 ```
 
+### Run Other Commands
+
+You can also run other commands within the container:
+
+```bash
+# Interactive bash shell
+docker run -it chekkan/wal-g:latest-pg /bin/bash
+
+# Run environment inspection
+docker run --rm chekkan/wal-g:latest-pg printenv
+
+# Run any other command
+docker run --rm chekkan/wal-g:latest-pg ls -la /usr/local/bin/
+```
+
 ### Available Tags
 
 - `latest` - Latest PostgreSQL variant
